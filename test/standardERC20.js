@@ -151,7 +151,16 @@ contract("StandardERC20", (accounts) => {
       increasingSpenderAmount,
       { from: receipient1 }
     );
-   
+   truffleAssert.eventEmitted(newAllowanceTx, "Approval", (obj) => {
+      console.log(obj.value, spenderAmount);
+      return (
+        obj.owner === receipient1 &&
+        obj.spender === spender &&
+        new BigNumber(oldAllowanceTx)
+          .plus(increasingSpenderAmount)
+          .isEqualTo(obj.value)
+      );
+    });
     const newAllowanceBalance = await standardERC20Instance.allowance(
       receipient1,
       spender
@@ -172,7 +181,16 @@ contract("StandardERC20", (accounts) => {
       decreasingSpenderAmount,
       { from: receipient1 }
     );
-    
+    truffleAssert.eventEmitted(newAllowanceTx, "Approval", (obj) => {
+      console.log(obj.value, spenderAmount);
+      return (
+        obj.owner === receipient1 &&
+        obj.spender === spender &&
+        new BigNumber(oldAllowanceTx)
+          .minus(decreasingSpenderAmount)
+          .isEqualTo(obj.value)
+      );
+    });
     const newAllowanceBalance = await standardERC20Instance.allowance(
       receipient1,
       spender
